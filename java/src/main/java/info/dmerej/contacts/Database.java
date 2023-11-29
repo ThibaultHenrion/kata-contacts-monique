@@ -36,7 +36,23 @@ public class Database {
     }
 
     public void insertContacts(Stream<Contact> contacts) {
-        // TODO
+        try {
+            PreparedStatement statement = connection.prepareStatement("""
+                INSERT INTO contacts VALUES (?, ? ,?)
+            """);
+            contacts.forEach(contact -> {
+                try {
+                    statement.setInt(1, ++insertedCount);
+                    statement.setString(2, contact.name());
+                    statement.setString(3, contact.email());
+                    statement.executeUpdate();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (SQLException e ) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getContactNameFromEmail(String email) {
